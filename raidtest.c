@@ -5,6 +5,10 @@
 #include <assert.h>
 #include <string.h>
 
+// recommended includes for use with simple file I/O
+#include <sys/stat.h>
+#include <fcntl.h>
+
 #ifdef RAID64
 #include "raidlib64.h"
 #define PTR_CAST (unsigned long long *)
@@ -64,6 +68,8 @@ void dumpBuffer(unsigned char *bufferToDump)
 int main(int argc, char *argv[])
 {
 	int idx, LBAidx, numTestIterations, rc;
+        int written=0, fd[5];
+        int fdrebuild;
 	double rate=0.0;
 	double totalRate=0.0, aveRate=0.0;
 	struct timeval StartTime, StopTime;
@@ -119,6 +125,36 @@ int main(int argc, char *argv[])
         getchar();
 
         assert(memcmp(testRebuild, testLBA4, SECTOR_SIZE) ==0);
+
+        // Adding TEST CASE #0 Feature to dump binary files with each 512byte LBA
+        // so I can do a "diff" on them, dump with od -x 2, etc.
+        //
+        fd[0] = open("Chunk1.bin", O_RDWR | O_CREAT, 00644);
+        fd[1] = open("Chunk2.bin", O_RDWR | O_CREAT, 00644);
+        fd[2] = open("Chunk3.bin", O_RDWR | O_CREAT, 00644);
+        fd[3] = open("Chunk4.bin", O_RDWR | O_CREAT, 00644);
+        fd[4] = open("ChunkXOR.bin", O_RDWR | O_CREAT, 00644);
+
+        written=write(fd[0], &testLBA1[0], SECTOR_SIZE);
+        assert(written == SECTOR_SIZE);
+        written=write(fd[1], &testLBA2[0], SECTOR_SIZE);
+        assert(written == SECTOR_SIZE);
+        written=write(fd[2], &testLBA3[0], SECTOR_SIZE);
+        assert(written == SECTOR_SIZE);
+        written=write(fd[3], &testLBA4[0], SECTOR_SIZE);
+        assert(written == SECTOR_SIZE);
+        written=write(fd[4], &testPLBA[0], SECTOR_SIZE);
+        assert(written == SECTOR_SIZE);
+     
+        for(idx=0; idx < 5; idx++) close(fd[idx]); 
+
+
+        // Now, do the same for the rebult 4th chunk
+        fdrebuild = open("Chunk4_Rebuilt.bin", O_RDWR | O_CREAT, 00644);
+        written=write(fdrebuild, &testRebuild[0], SECTOR_SIZE);
+        assert(written == SECTOR_SIZE);
+        close(fdrebuild);
+
 
 
         // TEST CASE #1
