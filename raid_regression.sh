@@ -4,11 +4,13 @@
 #
 echo "RAID UNIT REGRESSSION TEST"
 echo "RAID UNIT REGRESSSION TEST" >& testresults.log
+echo "" >>& testresults.log
 
 
 echo "TEST SET 1: checkout and build test"
 echo "TEST SET 1: checkout and build test" >>& testresults.log
-make clean
+make clean >& testresults.log
+git pull >& testresults.log
 make >>& testresults.log
 echo "" >>& testresults.log
 
