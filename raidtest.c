@@ -2,12 +2,12 @@
 
 
 
-void modifyBuffer(unsigned char *bufferToModify)
+void modifyBuffer(unsigned char *bufferToModify, int offset)
 {
     int idx;
 
     for(idx=0; idx < SECTOR_SIZE; idx++)
-        bufferToModify[idx] = (bufferToModify[idx]+1) % 100;
+        bufferToModify[idx] = (bufferToModify[idx]+offset) % 100;
 }
 
 
@@ -76,8 +76,12 @@ int main(int argc, char *argv[])
 
         printf("TEST CASE 1:\n");
 	// Compute XOR from 4 LBAs for RAID-5
-        modifyBuffer(&(testLBA1[0][0]));
-        modifyBuffer(&(testLBA3[0][0]));
+	//
+        modifyBuffer(&(testLBA1[0][0]), 7);
+        modifyBuffer(&(testLBA2[0][0]), 11);
+        modifyBuffer(&(testLBA3[0][0]), 13);
+        modifyBuffer(&(testLBA4[0][0]), 23);
+
         xorLBA(PTR_CAST &testLBA1[0],
 	       PTR_CAST &testLBA2[0],
 	       PTR_CAST &testLBA3[0],
@@ -169,7 +173,7 @@ int main(int argc, char *argv[])
 
             // For the next case modify the contents of testLBA4 each time
             //
-            modifyBuffer(&(testLBA4[LBAidx][0]));
+            modifyBuffer(&(testLBA4[LBAidx][0]), 17);
 
 	}
         printf("\n");
