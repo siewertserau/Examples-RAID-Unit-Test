@@ -181,4 +181,7 @@ int main(int argc, char *argv[])
         //
         // END TEST CASE #2
 
+        printf("FINISHED\n");
+
+        
 }

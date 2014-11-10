@@ -24,4 +24,6 @@ void rebuildLBA(unsigned char *LBA1,
 int checkEquivLBA(unsigned char *LBA1,
 		  unsigned char *LBA2);
 
+int stripeFile(char *inputFileName, int offsetSectors);
+int restoreFile(char *outputFileName, int offsetSectors, int fileLength);
 #endif
