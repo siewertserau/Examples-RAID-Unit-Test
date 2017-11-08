@@ -71,7 +71,7 @@ int main(int argc, char *argv[])
         // TEST CASE #1
         //
         printf("Architecture validation:\n");
-        printf("sizeof(unsigned long long)=%d\n", sizeof(unsigned long long));
+        printf("sizeof(unsigned long long)=%lu\n", sizeof(unsigned long long));
         printf("\n");
 
         printf("TEST CASE 1:\n");

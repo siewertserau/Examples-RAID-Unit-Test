@@ -95,8 +95,8 @@ int stripeFile(char *inputFileName, int offsetSectors)
 {
     int fd[5], idx;
     FILE *fdin;
-    unsigned char stripe[5*512];
-    int offset=0, bread=0, btoread=(4*512), bwritten=0, btowrite=(512), sectorCnt=0, byteCnt=0;
+    unsigned char stripe[5*STRIP_SIZE];
+    int offset=0, bread=0, btoread=(4*STRIP_SIZE), bwritten=0, btowrite=(STRIP_SIZE), sectorCnt=0, byteCnt=0;
 
     fdin = fopen(inputFileName, "r");
     fd[0] = open("StripeChunk1.bin", O_RDWR | O_CREAT, 00644);
@@ -110,17 +110,17 @@ int stripeFile(char *inputFileName, int offsetSectors)
     {
 
         // read a stripe or to end of file
-        offset=0, bread=0, btoread=(4*512);
+        offset=0, bread=0, btoread=(4*STRIP_SIZE);
         do
         {
             bread=fread(&stripe[offset], 1, btoread, fdin); 
             offset+=bread;
-            btoread=(4*512)-bread;
+            btoread=(4*STRIP_SIZE)-bread;
         }
         while (!(feof(fdin)) && (btoread > 0));
 
 
-        if((offset < (4*512)) && (feof(fdin)))
+        if((offset < (4*STRIP_SIZE)) && (feof(fdin)))
         {
             printf("hit end of file\n");
             bzero(&stripe[offset], btoread);
@@ -129,63 +129,63 @@ int stripeFile(char *inputFileName, int offsetSectors)
         else
         {
             printf("read full stripe\n");
-            assert(offset == (4*512));
-            byteCnt+=(4*512);
+            assert(offset == (4*STRIP_SIZE));
+            byteCnt+=(4*STRIP_SIZE);
         };
 
         // computer xor code for stripe
         //
         xorLBA(PTR_CAST &stripe[0],
-               PTR_CAST &stripe[512],
-               PTR_CAST &stripe[1024],
-               PTR_CAST &stripe[1536],
-               PTR_CAST &stripe[2048]);
+               PTR_CAST &stripe[STRIP_SIZE],
+               PTR_CAST &stripe[(2*STRIP_SIZE)],
+               PTR_CAST &stripe[(3*STRIP_SIZE)],
+               PTR_CAST &stripe[(4*STRIP_SIZE)]);
 
 
         // write out the stripe + xor code
         //
-        offset=0, bwritten=0, btowrite=(512);
+        offset=0, bwritten=0, btowrite=(STRIP_SIZE);
         do
         {
-            bwritten=write(fd[0], &stripe[offset], 512); 
+            bwritten=write(fd[0], &stripe[offset], STRIP_SIZE); 
             offset+=bwritten;
-            btowrite=(512)-bwritten;
+            btowrite=(STRIP_SIZE)-bwritten;
         }
         while (btowrite > 0);
 
-        offset=512, bwritten=0, btowrite=(512);
+        offset=STRIP_SIZE, bwritten=0, btowrite=(STRIP_SIZE);
         do
         {
-            bwritten=write(fd[1], &stripe[offset], 512); 
+            bwritten=write(fd[1], &stripe[offset], STRIP_SIZE); 
             offset+=bwritten;
-            btowrite=(512)-bwritten;
+            btowrite=(STRIP_SIZE)-bwritten;
         }
         while (btowrite > 0);
 
-        offset=1024, bwritten=0, btowrite=(512);
+        offset=(2*STRIP_SIZE), bwritten=0, btowrite=(STRIP_SIZE);
         do
         {
-            bwritten=write(fd[2], &stripe[offset], 512); 
+            bwritten=write(fd[2], &stripe[offset], STRIP_SIZE); 
             offset+=bwritten;
-            btowrite=(512)-bwritten;
+            btowrite=(STRIP_SIZE)-bwritten;
         }
         while (btowrite > 0);
 
-        offset=1536, bwritten=0, btowrite=(512);
+        offset=(3*STRIP_SIZE), bwritten=0, btowrite=(STRIP_SIZE);
         do
         {
-            bwritten=write(fd[3], &stripe[offset], 512); 
+            bwritten=write(fd[3], &stripe[offset], STRIP_SIZE); 
             offset+=bwritten;
-            btowrite=(512)-bwritten;
+            btowrite=(STRIP_SIZE)-bwritten;
         }
         while (btowrite > 0);
 
-        offset=2048, bwritten=0, btowrite=(512);
+        offset=(4*STRIP_SIZE), bwritten=0, btowrite=(STRIP_SIZE);
         do
         {
-            bwritten=write(fd[4], &stripe[offset], 512); 
+            bwritten=write(fd[4], &stripe[offset], STRIP_SIZE); 
             offset+=bwritten;
-            btowrite=(512)-bwritten;
+            btowrite=(STRIP_SIZE)-bwritten;
         }
         while (btowrite > 0);
 
@@ -207,10 +207,10 @@ int restoreFile(char *outputFileName, int offsetSectors, int fileLength)
 {
     int fd[5], idx;
     FILE *fdout;
-    unsigned char stripe[5*512];
-    int offset=0, bread=0, btoread=(4*512), bwritten=0, btowrite=(512), sectorCnt=fileLength/512;
-    int stripeCnt=fileLength/(4*512);
-    int lastStripeBytes = fileLength % (4*512);
+    unsigned char stripe[5*STRIP_SIZE];
+    int offset=0, bread=0, btoread=(4*STRIP_SIZE), bwritten=0, btowrite=(STRIP_SIZE), sectorCnt=fileLength/STRIP_SIZE;
+    int stripeCnt=fileLength/(4*STRIP_SIZE);
+    int lastStripeBytes = fileLength % (4*STRIP_SIZE);
 
     fdout = fopen(outputFileName, "w");
     fd[0] = open("StripeChunk1.bin", O_RDWR | O_CREAT, 00644);
@@ -224,48 +224,48 @@ int restoreFile(char *outputFileName, int offsetSectors, int fileLength)
     {
         // read in the stripe + xor code
         //
-        offset=0, bread=0, btoread=(512);
+        offset=0, bread=0, btoread=(STRIP_SIZE);
         do
         {
-            bread=read(fd[0], &stripe[offset], 512); 
+            bread=read(fd[0], &stripe[offset], STRIP_SIZE); 
             offset+=bread;
-            btoread=(512)-bread;
+            btoread=(STRIP_SIZE)-bread;
         }
         while (btoread > 0);
 
-        offset=512, bread=0, btoread=(512);
+        offset=STRIP_SIZE, bread=0, btoread=(STRIP_SIZE);
         do
         {
-            bread=read(fd[1], &stripe[offset], 512); 
+            bread=read(fd[1], &stripe[offset], STRIP_SIZE); 
             offset+=bread;
-            btoread=(512)-bread;
+            btoread=(STRIP_SIZE)-bread;
         }
         while (btoread > 0);
 
-        offset=1024, bread=0, btoread=(512);
+        offset=(2*STRIP_SIZE), bread=0, btoread=(STRIP_SIZE);
         do
         {
-            bread=read(fd[2], &stripe[offset], 512); 
+            bread=read(fd[2], &stripe[offset], STRIP_SIZE); 
             offset+=bread;
-            btoread=(512)-bread;
+            btoread=(STRIP_SIZE)-bread;
         }
         while (btoread > 0);
 
-        offset=1536, bread=0, btoread=(512);
+        offset=(3*STRIP_SIZE), bread=0, btoread=(STRIP_SIZE);
         do
         {
-            bread=read(fd[3], &stripe[offset], 512); 
+            bread=read(fd[3], &stripe[offset], STRIP_SIZE); 
             offset+=bread;
-            btoread=(512)-bread;
+            btoread=(STRIP_SIZE)-bread;
         }
         while (btoread > 0);
 
-        offset=2048, bread=0, btoread=(512);
+        offset=(4*STRIP_SIZE), bread=0, btoread=(STRIP_SIZE);
         do
         {
-            bread=read(fd[4], &stripe[offset], 512); 
+            bread=read(fd[4], &stripe[offset], STRIP_SIZE); 
             offset+=bread;
-            btoread=(512)-bread;
+            btoread=(STRIP_SIZE)-bread;
         }
         while (btoread > 0);
 
@@ -273,12 +273,12 @@ int restoreFile(char *outputFileName, int offsetSectors, int fileLength)
         //
 
        // write a full stripe
-        offset=0, bwritten=0, btowrite=(4*512);
+        offset=0, bwritten=0, btowrite=(4*STRIP_SIZE);
         do
         {
             bwritten=fwrite(&stripe[offset], 1, btowrite, fdout); 
             offset+=bwritten;
-            btowrite=(4*512)-bwritten;
+            btowrite=(4*STRIP_SIZE)-bwritten;
         }
         while ((btowrite > 0));
 
@@ -289,48 +289,48 @@ int restoreFile(char *outputFileName, int offsetSectors, int fileLength)
     {
         // read in the parital stripe + xor code
         //
-        offset=0, bread=0, btoread=(512);
+        offset=0, bread=0, btoread=(STRIP_SIZE);
         do
         {
-            bread=read(fd[0], &stripe[offset], 512); 
+            bread=read(fd[0], &stripe[offset], STRIP_SIZE); 
             offset+=bread;
-            btoread=(512)-bread;
+            btoread=(STRIP_SIZE)-bread;
         }
         while (btoread > 0);
 
-        offset=512, bread=0, btoread=(512);
+        offset=STRIP_SIZE, bread=0, btoread=(STRIP_SIZE);
         do
         {
-            bread=read(fd[1], &stripe[offset], 512); 
+            bread=read(fd[1], &stripe[offset], STRIP_SIZE); 
             offset+=bread;
-            btoread=(512)-bread;
+            btoread=(STRIP_SIZE)-bread;
         }
         while (btoread > 0);
 
-        offset=1024, bread=0, btoread=(512);
+        offset=(2*STRIP_SIZE), bread=0, btoread=(STRIP_SIZE);
         do
         {
-            bread=read(fd[2], &stripe[offset], 512); 
+            bread=read(fd[2], &stripe[offset], STRIP_SIZE); 
             offset+=bread;
-            btoread=(512)-bread;
+            btoread=(STRIP_SIZE)-bread;
         }
         while (btoread > 0);
 
-        offset=1536, bread=0, btoread=(512);
+        offset=(3*STRIP_SIZE), bread=0, btoread=(STRIP_SIZE);
         do
         {
-            bread=read(fd[3], &stripe[offset], 512); 
+            bread=read(fd[3], &stripe[offset], STRIP_SIZE); 
             offset+=bread;
-            btoread=(512)-bread;
+            btoread=(STRIP_SIZE)-bread;
         }
         while (btoread > 0);
 
-        offset=2048, bread=0, btoread=(512);
+        offset=(4*STRIP_SIZE), bread=0, btoread=(STRIP_SIZE);
         do
         {
-            bread=read(fd[4], &stripe[offset], 512); 
+            bread=read(fd[4], &stripe[offset], STRIP_SIZE); 
             offset+=bread;
-            btoread=(512)-bread;
+            btoread=(STRIP_SIZE)-bread;
         }
         while (btoread > 0);
 

@@ -8,6 +8,8 @@
 
 #define SECTOR_SIZE (512)
 
+#define STRIP_SIZE (512)
+
 void xorLBA(unsigned char *LBA1,
 	    unsigned char *LBA2,
 	    unsigned char *LBA3,
