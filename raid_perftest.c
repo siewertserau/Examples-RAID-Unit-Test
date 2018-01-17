@@ -82,6 +82,8 @@ int main(int argc, char *argv[])
         // END TEST CASE #1
 
 
+#ifndef RAID64
+
         // TEST CASE #2 - Same as #1, but using more readable array version of XOR
         //
         //
@@ -120,6 +122,6 @@ int main(int argc, char *argv[])
         //
         // END TEST CASE #2
 
-
+#endif
 
 }
