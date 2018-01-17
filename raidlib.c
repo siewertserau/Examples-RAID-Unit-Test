@@ -22,7 +22,7 @@
 #endif
 
 
-// RAID-5 encoding
+// RAID-5 4+1 encoding
 //
 // This is 80% capacity with 1/5 LBAs used for parity.
 //
@@ -30,7 +30,7 @@
 //
 // PRECONDITIONS:
 // 1) LBA pointeres must have memory allocated for them externally
-// 2) Blocks pointer to by LBAs are initialized with data
+// 2) LBAs are initialized with data
 //
 // POST-CONDITIONS:
 // 1) Contents of PLBA is modified and contains the computed parity using XOR
@@ -48,7 +48,29 @@ void xorLBA(unsigned char *LBA1,
 }
 
 
-// RAID-5 Rebuild
+// More readable version of xorLBA which uses array derefernces compared to pointer
+// arithmetic in original version.
+//
+void xorLBAArray(unsigned char LBA1[],
+	         unsigned char LBA2[],
+	         unsigned char LBA3[],
+	         unsigned char LBA4[],
+	         unsigned char PLBA[])
+{
+    int index;
+
+    // XOR all bits in all bytes of each of the 4 data blocks @ logical block address to form
+    // the parity block.
+    //
+    for(index=0; index<SECTOR_SIZE; index++)
+    {
+        PLBA[index] = LBA1[index] ^ LBA2[index] ^ LBA3[index] ^ LBA4[index];
+    }
+}
+
+
+
+// RAID-5 4+1 Rebuild
 //
 // Provide any 3 of the original LBAs and the Parity LBA to rebuild the RLBA
 //
@@ -73,6 +95,33 @@ void rebuildLBA(unsigned char *LBA1,
         *(RLBA+idx) =(*(PLBA+idx))^(checkParity);
     }
 }
+
+
+// More readable version of xorLBA which uses array derefernces compared to pointer
+// arithmetic in original version.
+//
+void rebuildLBAArray(unsigned char LBA1[],
+	             unsigned char LBA2[],
+	             unsigned char LBA3[],
+	             unsigned char PLBA[],
+	             unsigned char RLBA[])
+{
+    int index;
+    unsigned char checkParity;
+
+    for(index=0; index<SECTOR_SIZE; index++)
+    {
+        // Parity check word is simply XOR of remaining good LBAs
+        //
+        checkParity=LBA1[index] ^ LBA2[index] ^ LBA3[index];
+
+        // Rebuilt LBA is simply XOR of original parity and parity check word
+        // which will preserve original parity computed over the 4 LBAs
+        //
+        RLBA[index] = PLBA[index] ^ checkParity;
+    }
+}
+
 
 
 int checkEquivLBA(unsigned char *LBA1,

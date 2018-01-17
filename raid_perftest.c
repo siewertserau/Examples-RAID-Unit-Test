@@ -42,7 +42,7 @@ int main(int argc, char *argv[])
         // it rebuilds a missing buffer (buffer 4 in the test case) and we simple time how long this
         // takes.
         //
-	printf("\nRAID Operations Performance Test\n");
+	printf("\nRAID Operations Performance Test #1 - Pointers\n");
 
 	gettimeofday(&StartTime, 0);
 
@@ -80,6 +80,46 @@ int main(int argc, char *argv[])
 	printf("%lf RAID ops computed per second\n", rate);
         //
         // END TEST CASE #1
+
+
+        // TEST CASE #2 - Same as #1, but using more readable array version of XOR
+        //
+        //
+        // This test case computes the XOR parity from 4 test buffers (512 bytes each) and then
+        // it rebuilds a missing buffer (buffer 4 in the test case) and we simple time how long this
+        // takes.
+        //
+	printf("\nRAID Operations Performance Test #2 - Arrays\n");
+
+	gettimeofday(&StartTime, 0);
+
+	for(idx=0;idx<numTestIterations;idx++)
+	{
+            LBAidx = idx % MAX_LBAS;
+
+	    // Compute XOR from 4 LBAs for RAID-5
+            xorLBAArray(testLBA1[LBAidx], testLBA2[LBAidx], testLBA3[LBAidx], testLBA4[LBAidx], testPLBA[LBAidx]);
+
+	    // Now rebuild LBA into test to verify
+            rebuildLBAArray(testLBA1[LBAidx], testLBA2[LBAidx], testLBA3[LBAidx], testPLBA[LBAidx], testRebuild[LBAidx]);
+	}
+
+	gettimeofday(&StopTime, 0);
+
+        microsecs=((StopTime.tv_sec - StartTime.tv_sec)*1000000);
+
+	if(StopTime.tv_usec > StartTime.tv_usec)
+		microsecs+=(StopTime.tv_usec - StartTime.tv_usec);
+	else
+		microsecs-=(StartTime.tv_usec - StopTime.tv_usec);
+
+	printf("Test Done in %u microsecs for %d iterations\n", microsecs, numTestIterations);
+
+	rate=((double)numTestIterations)/(((double)microsecs)/1000000.0);
+	printf("%lf RAID ops computed per second\n", rate);
+        //
+        // END TEST CASE #2
+
 
 
 }
