@@ -7,6 +7,10 @@
 #include <strings.h>
 #include <assert.h>
 
+// added for read and write prototype system calls
+// to address compiler warning
+#include <unistd.h>
+
 #include "raidlib.h"
 
 #ifdef RAID64
