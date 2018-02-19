@@ -4,9 +4,8 @@
 
 int main(int argc, char *argv[])
 {
-	int idx, LBAidx, numTestIterations, rc;
+	int idx, LBAidx, numTestIterations;
 	double rate=0.0;
-	double totalRate=0.0, aveRate=0.0;
 	struct timeval StartTime, StopTime;
 	unsigned int microsecs;
 
@@ -124,4 +123,5 @@ int main(int argc, char *argv[])
 
 #endif
 
+        return(1);
 }
