@@ -8,6 +8,7 @@ int main(int argc, char *argv[])
 
     bytesWritten=stripeFile(argv[1], 0); 
     bytesRestored=restoreFile(argv[2], 0, bytesWritten); 
-    printf("FINISHED\n");
-        
+    printf("FINISHED with bytesRestored=%d\n", bytesRestored);
+  
+    return(1);      
 }

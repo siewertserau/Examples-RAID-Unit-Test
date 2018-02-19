@@ -38,13 +38,9 @@ void dumpBuffer(unsigned char *bufferToDump)
 
 int main(int argc, char *argv[])
 {
-	int idx, LBAidx, numTestIterations, rc;
+	int idx, LBAidx, numTestIterations;
         int written=0, fd[5];
         int fdrebuild;
-	double rate=0.0;
-	double totalRate=0.0, aveRate=0.0;
-	struct timeval StartTime, StopTime;
-	unsigned int microsecs;
 
 
         if(argc < 2)
@@ -97,11 +93,11 @@ int main(int argc, char *argv[])
 	           PTR_CAST &testPLBA[0],
 	           PTR_CAST &testRebuild[0]);
 
-        dumpBuffer((char *)&testLBA4[0]);
+        dumpBuffer((unsigned char *)&testLBA4[0]);
         printf("\n");
         //getchar();
 
-        dumpBuffer((char *)&testRebuild[0]);
+        dumpBuffer((unsigned char *)&testRebuild[0]);
         printf("\n");
         //getchar();
 

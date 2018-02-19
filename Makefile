@@ -2,7 +2,7 @@ INCLUDE_DIRS =
 LIB_DIRS = 
 
 CDEFS=
-CFLAGS= -O0 -g $(INCLUDE_DIRS) $(CDEFS)
+CFLAGS= -Wall -O0 -g $(INCLUDE_DIRS) $(CDEFS)
 //CFLAGS= -O3 -msse3 -malign-double -g $(INCLUDE_DIRS) $(CDEFS)
 LIBS=
 

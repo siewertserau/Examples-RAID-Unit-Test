@@ -265,6 +265,8 @@ int restoreFile(char *outputFileName, int offsetSectors, int fileLength)
     int stripeCnt=fileLength/(4*STRIP_SIZE);
     int lastStripeBytes = fileLength % (4*STRIP_SIZE);
 
+    assert(sectorCnt != 0);
+
     fdout = fopen(outputFileName, "w");
     fd[0] = open("StripeChunk1.bin", O_RDWR | O_CREAT, 00644);
     fd[1] = open("StripeChunk2.bin", O_RDWR | O_CREAT, 00644);
