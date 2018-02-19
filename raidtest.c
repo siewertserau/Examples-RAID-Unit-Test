@@ -181,5 +181,5 @@ int main(int argc, char *argv[])
 
         printf("FINISHED\n");
 
-        
+        return(1);        
 }
