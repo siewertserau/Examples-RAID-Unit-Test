@@ -17,7 +17,7 @@ OBJS= ${CFILES:.c=.o}
 all:	${DRIVER}
 
 clean:
-	-rm -f *.o *.NEW *~ Chunk*.bin
+	-rm -f *.o *.NEW *~ Chunk*.bin StripeChunk*.bin
 	-rm -f ${DRIVER} ${DERIVED} ${GARBAGE}
 	make -f Makefile64 clean
 

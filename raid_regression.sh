@@ -17,7 +17,7 @@ echo "" >>& testresults.log
 
 echo "TEST SET 2: simple RAID encode, erase and rebuild test"
 echo "TEST SET 2: simple RAID encode, erase and rebuild test" >>& testresults.log
-raidtest 1000 >>& testresults.log
+./raidtest 1000 >>& testresults.log
 echo "" >>& testresults.log
 
 
@@ -32,5 +32,5 @@ echo "" >>& testresults.log
 
 echo "TEST SET 4: RAID performance test"
 echo "TEST SET 4: RAID performance test" >>& testresults.log
-raid_perftest 1000 >>& testresults.log
+./raid_perftest 1000 >>& testresults.log
 echo "" >>& testresults.log
