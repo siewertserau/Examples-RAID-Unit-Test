@@ -151,7 +151,12 @@ int stripeFile(char *inputFileName, int offsetSectors)
     unsigned char stripe[5*STRIP_SIZE];
     int offset=0, bread=0, btoread=(4*STRIP_SIZE), bwritten=0, btowrite=(STRIP_SIZE), sectorCnt=0, byteCnt=0;
 
-    fdin = fopen(inputFileName, "r");
+    if((fdin = fopen(inputFileName, "r")) == (void *)0)
+    {
+	    perror("input file error:");
+	    return(-1);
+    }
+	
     fd[0] = open("StripeChunk1.bin", O_RDWR | O_CREAT, 00644);
     fd[1] = open("StripeChunk2.bin", O_RDWR | O_CREAT, 00644);
     fd[2] = open("StripeChunk3.bin", O_RDWR | O_CREAT, 00644);
