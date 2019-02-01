@@ -156,12 +156,13 @@ int stripeFile(char *inputFileName, int offsetSectors)
 	    perror("input file error:");
 	    return(-1);
     }
-	
-    fd[0] = open("StripeChunk1.bin", O_RDWR | O_CREAT, 00644);
-    fd[1] = open("StripeChunk2.bin", O_RDWR | O_CREAT, 00644);
-    fd[2] = open("StripeChunk3.bin", O_RDWR | O_CREAT, 00644);
-    fd[3] = open("StripeChunk4.bin", O_RDWR | O_CREAT, 00644);
-    fd[4] = open("StripeChunkXOR.bin", O_RDWR | O_CREAT, 00644);
+
+    // if the stripe chunk files can't be created, there's no obvious recovery, so for now, assert
+    assert((fd[0] = open("StripeChunk1.bin", O_RDWR | O_CREAT, 00644)) != (void *)0);
+    assert((fd[1] = open("StripeChunk2.bin", O_RDWR | O_CREAT, 00644)) != (void *)0);
+    assert((fd[2] = open("StripeChunk3.bin", O_RDWR | O_CREAT, 00644)) != (void *)0);
+    assert((fd[3] = open("StripeChunk4.bin", O_RDWR | O_CREAT, 00644)) != (void *)0);
+    assert((fd[4] = open("StripeChunkXOR.bin", O_RDWR | O_CREAT, 00644)) != (void *)0);
 
 
     do
@@ -271,13 +272,18 @@ int restoreFile(char *outputFileName, int offsetSectors, int fileLength)
     int lastStripeBytes = fileLength % (4*STRIP_SIZE);
 
     assert(sectorCnt != 0);
-
-    fdout = fopen(outputFileName, "w");
-    fd[0] = open("StripeChunk1.bin", O_RDWR | O_CREAT, 00644);
-    fd[1] = open("StripeChunk2.bin", O_RDWR | O_CREAT, 00644);
-    fd[2] = open("StripeChunk3.bin", O_RDWR | O_CREAT, 00644);
-    fd[3] = open("StripeChunk4.bin", O_RDWR | O_CREAT, 00644);
-    fd[4] = open("StripeChunkXOR.bin", O_RDWR | O_CREAT, 00644);
+	
+    if((fdin = fopen(outputFileName, "w")) == (void *)0)
+    {
+	    perror("output file error:");
+	    return(-1);
+    }
+	
+    assert((fd[0] = open("StripeChunk1.bin", O_RDWR | O_CREAT, 00644)) != (void *)0);
+    assert((fd[1] = open("StripeChunk2.bin", O_RDWR | O_CREAT, 00644)) != (void *)0);
+    assert((fd[2] = open("StripeChunk3.bin", O_RDWR | O_CREAT, 00644)) != (void *)0);
+    assert((fd[3] = open("StripeChunk4.bin", O_RDWR | O_CREAT, 00644)) != (void *)0);
+    assert((fd[4] = open("StripeChunkXOR.bin", O_RDWR | O_CREAT, 00644)) != (void *)0);
 
 
     for(idx=0; idx < stripeCnt; idx++)
