@@ -273,7 +273,7 @@ int restoreFile(char *outputFileName, int offsetSectors, int fileLength)
 
     assert(sectorCnt != 0);
 	
-    if((fdin = fopen(outputFileName, "w")) == 0)
+    if((fdout = fopen(outputFileName, "w")) == 0)
     {
 	    perror("output file error:");
 	    return(-1);
