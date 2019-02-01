@@ -13,11 +13,26 @@ int main(int argc, char *argv[])
         exit(-1);
     }
 
-    bytesWritten=stripeFile(argv[1], 0); 
-    printf("CHUNKED with bytesWritten=%d\n", bytesWritten);
+    if((bytesWritten=stripeFile(argv[1], 0) > 0)
+    {
+        printf("CHUNKED with bytesWritten=%d\n", bytesWritten);
+    }
+    else
+    {
+        printf("fatal error while striping\n"); exit(-1);
+    }
+        
+    
 
-    bytesRestored=restoreFile(argv[2], 0, bytesWritten); 
-    printf("FINISHED with bytesRestored=%d\n", bytesRestored);
+    if((bytesRestored=restoreFile(argv[2], 0, bytesWritten) > 0)
+    {
+        printf("FINISHED with bytesRestored=%d\n", bytesRestored);
+    }
+    else
+    {
+        printf("fatal error while restoring\n"); exit(-1);
+    }
+    
   
     return(1);      
 }
