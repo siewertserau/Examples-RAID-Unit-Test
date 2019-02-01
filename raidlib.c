@@ -151,18 +151,18 @@ int stripeFile(char *inputFileName, int offsetSectors)
     unsigned char stripe[5*STRIP_SIZE];
     int offset=0, bread=0, btoread=(4*STRIP_SIZE), bwritten=0, btowrite=(STRIP_SIZE), sectorCnt=0, byteCnt=0;
 
-    if((fdin = fopen(inputFileName, "r")) == (void *)0)
+    if((fdin = fopen(inputFileName, "r")) == 0)
     {
 	    perror("input file error:");
 	    return(-1);
     }
 
     // if the stripe chunk files can't be created, there's no obvious recovery, so for now, assert
-    assert((fd[0] = open("StripeChunk1.bin", O_RDWR | O_CREAT, 00644)) != (void *)0);
-    assert((fd[1] = open("StripeChunk2.bin", O_RDWR | O_CREAT, 00644)) != (void *)0);
-    assert((fd[2] = open("StripeChunk3.bin", O_RDWR | O_CREAT, 00644)) != (void *)0);
-    assert((fd[3] = open("StripeChunk4.bin", O_RDWR | O_CREAT, 00644)) != (void *)0);
-    assert((fd[4] = open("StripeChunkXOR.bin", O_RDWR | O_CREAT, 00644)) != (void *)0);
+    assert((fd[0] = open("StripeChunk1.bin", O_RDWR | O_CREAT, 00644)) != 0);
+    assert((fd[1] = open("StripeChunk2.bin", O_RDWR | O_CREAT, 00644)) != 0);
+    assert((fd[2] = open("StripeChunk3.bin", O_RDWR | O_CREAT, 00644)) != 0);
+    assert((fd[3] = open("StripeChunk4.bin", O_RDWR | O_CREAT, 00644)) != 0);
+    assert((fd[4] = open("StripeChunkXOR.bin", O_RDWR | O_CREAT, 00644)) != 0);
 
 
     do
@@ -273,17 +273,17 @@ int restoreFile(char *outputFileName, int offsetSectors, int fileLength)
 
     assert(sectorCnt != 0);
 	
-    if((fdin = fopen(outputFileName, "w")) == (void *)0)
+    if((fdin = fopen(outputFileName, "w")) == 0)
     {
 	    perror("output file error:");
 	    return(-1);
     }
 	
-    assert((fd[0] = open("StripeChunk1.bin", O_RDWR | O_CREAT, 00644)) != (void *)0);
-    assert((fd[1] = open("StripeChunk2.bin", O_RDWR | O_CREAT, 00644)) != (void *)0);
-    assert((fd[2] = open("StripeChunk3.bin", O_RDWR | O_CREAT, 00644)) != (void *)0);
-    assert((fd[3] = open("StripeChunk4.bin", O_RDWR | O_CREAT, 00644)) != (void *)0);
-    assert((fd[4] = open("StripeChunkXOR.bin", O_RDWR | O_CREAT, 00644)) != (void *)0);
+    assert((fd[0] = open("StripeChunk1.bin", O_RDWR | O_CREAT, 00644)) != 0);
+    assert((fd[1] = open("StripeChunk2.bin", O_RDWR | O_CREAT, 00644)) != 0);
+    assert((fd[2] = open("StripeChunk3.bin", O_RDWR | O_CREAT, 00644)) != 0);
+    assert((fd[3] = open("StripeChunk4.bin", O_RDWR | O_CREAT, 00644)) != 0);
+    assert((fd[4] = open("StripeChunkXOR.bin", O_RDWR | O_CREAT, 00644)) != 0);
 
 
     for(idx=0; idx < stripeCnt; idx++)
